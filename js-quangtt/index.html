@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Management</title>
+</head>
+<body>
+    <div id="bai10"></div>
+    <div id="bai11"></div>
+    <div id="bai12"></div>
+    <div id="bai13"></div>
+    <div id="bai14"></div>
+    <div id="bai15"></div>
+    <div id="bai16"></div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script>
+        class Product {
+            constructor(id, name, categoryId, saleDate, quality, isDelete) {
+                this.id = id;
+                this.categoryId = categoryId;
+                this.name = name;
+                this.saleDate = saleDate;
+                this.quality = quality;
+                this.isDelete = isDelete;
+            }
+        }
+
+        const products = [
+            new Product(1, 'Product A', 101, '2024-01-15', 10, false),
+            new Product(2, 'Product B', 102, '2024-02-20', 10, false),
+            new Product(3, 'Product C', 103, '2024-03-10', 10, false),
+            new Product(4, 'Product D', 104, '2024-04-25', 10, true),
+            new Product(5, 'Product E', 105, '2024-05-30', 10, false),
+            new Product(6, 'Product F', 106, '2024-06-15', 10, false),
+            new Product(7, 'Product G', 107, '2024-07-05', 10, false),
+            new Product(8, 'Product H', 108, '2024-08-20', 10, true),
+            new Product(9, 'Product I', 109, '2024-09-10', 10, false),
+            new Product(10, 'Product J', 110, '2024-10-25', 10, false)
+        ];
+
+        function listProduct(products) {
+            let htmlContent = '<ul>';
+            products.forEach(product => {
+                htmlContent += `<li>ID: ${product.id}, Name: ${product.name}, Category ID: ${product.categoryId}, Sale Date: ${product.saleDate}, Quality: ${product.quality}, Is Deleted: ${product.isDelete}</li>`;
+            });
+            htmlContent += '</ul>';
+            $("#bai10").html(htmlContent);
+        }
+
+        function filterProductByIdES6(listProduct, idProduct) {
+            const product = listProduct.find(product => product.id === idProduct);
+            return product ? product.name : null;
+        }
+
+        function filterProductByIdForLoop(listProduct, idProduct) {
+            for (let i = 0; i < listProduct.length; i++) {
+                if (listProduct[i].id === idProduct) {
+                    return listProduct[i].name;
+                }
+            }
+            return null;
+        }
+
+        function filterProductByQualityES6(listProduct) {
+            return listProduct.filter(product => product.quality > 0 && !product.isDelete);
+        }
+
+        function filterProductByQualityForLoop(listProduct) {
+            const listPro = [];
+            for (let i = 0; i < listProduct.length; i++) {
+                if (listProduct[i].quality > 0 && !listProduct[i].isDelete) {
+                    listPro.push(listProduct[i]);
+                }
+            }
+            return listPro;
+        }
+
+        function filterProductBySaleDateES6(listProduct) {
+            const currentDate = new Date();
+            return listProduct.filter(product => new Date(product.saleDate) > currentDate && !product.isDelete)
+                              .map(product => product.name);
+        }
+
+        function filterProductBySaleDateForLoop(listProduct) {
+            const currentDate = new Date();
+            const result = [];
+            for (let i = 0; i < listProduct.length; i++) {
+                if (new Date(listProduct[i].saleDate) > currentDate && !listProduct[i].isDelete) {
+                    result.push(listProduct[i].name);
+                }
+            }
+            return result;
+        }
+
+        function totalProductReduce(listProduct) {
+            return listProduct.reduce((total, product) => {
+                return !product.isDelete ? total + parseFloat(product.quality) : total;
+            }, 0);
+        }
+
+        function totalProductForLoop(listProduct) {
+            let total = 0;
+            for (let i = 0; i < listProduct.length; i++) {
+                if (!listProduct[i].isDelete) {
+                    total += parseFloat(listProduct[i].quality);
+                }
+            }
+            return total;
+        }
+
+        function isHaveProductInCategoryES6(listProduct, categoryId) {
+            return listProduct.some(product => product.categoryId == categoryId);
+        }
+
+        function isHaveProductInCategoryForLoop(listProduct, categoryId) {
+            for (let i = 0; i < listProduct.length; i++) {
+                if (listProduct[i].categoryId == categoryId) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        function filterProductBySaleDateAndQualityES6(listProduct) {
+            const currentDate = new Date();
+            return listProduct.filter(product => new Date(product.saleDate) > currentDate && product.quality > 0)
+                              .map(product => [product.id, product.name]);
+        }
+
+        function filterProductBySaleDateAndQualityForLoop(listProduct) {
+            const currentDate = new Date();
+            const result = [];
+            for (let i = 0; i < listProduct.length; i++) {
+                if (new Date(listProduct[i].saleDate) > currentDate && listProduct[i].quality > 0) {
+                    result.push([listProduct[i].id, listProduct[i].name]);
+                }
+            }
+            return result;
+        }
+
+        function generateProductListHTML(filteredProducts) {
+            let htmlContent = '<ul>';
+            filteredProducts.forEach(product => {
+                htmlContent += `<li>ID: ${product.id}, Name: ${product.name}, Category ID: ${product.categoryId}, Sale Date: ${product.saleDate}, Quality: ${product.quality}, Is Deleted: ${product.isDelete}</li>`;
+            });
+            htmlContent += '</ul>';
+            return htmlContent;
+        }
+
+        listProduct(products);
+
+        $("#bai11").html(`
+            <h3>11 Product By Id ES6:</h3> ${filterProductByIdES6(products, 2)} <br>
+            <h3>11 Product By Id For Loop:</h3> ${filterProductByIdForLoop(products, 3)}
+        `);
+
+        $("#bai12").html(`
+            <h3>12 Products By Quality For Loop</h3>
+            ${generateProductListHTML(filterProductByQualityForLoop(products))}
+            <h3>12 Products By Quality For ES6</h3>
+            ${generateProductListHTML(filterProductByQualityES6(products))}
+        `);
+
+        $("#bai13").html(`
+            <h3>13 Product By Sale Date ES6</h3>
+            ${filterProductBySaleDateES6(products).join('<br>')}
+            <h3>13 Product By Sale Date For Loop</h3>
+            ${filterProductBySaleDateForLoop(products).join('<br>')}
+        `);
+
+        $("#bai14").html(`
+            <h3>14 Total Product Quality Reduce:</h3>
+            <p>${totalProductReduce(products)}</p>
+            <h3>14 Total Product Quality For Loop:</h3>
+            <p>${totalProductForLoop(products)}</p>
+        `);
+
+        const categoryId = 105; 
+        $("#bai15").html(`
+            <h3>15 Check Product in Category (Category ID: ${categoryId}):</h3>
+            <p>ES6: ${isHaveProductInCategoryES6(products, categoryId)}</p>
+            <p>For Loop: ${isHaveProductInCategoryForLoop(products, categoryId)}</p>
+        `);
+
+        $("#bai16").html(`
+            <h3>16 Products By Sale Date and Quality ES6</h3>
+            ${filterProductBySaleDateAndQualityES6(products).map(p => `ID: ${p[0]}, Name: ${p[1]}`).join('<br>')}
+            <h3>16 Products By Sale Date and Quality For Loop</h3>
+            ${filterProductBySaleDateAndQualityForLoop(products).map(p => `ID: ${p[0]}, Name: ${p[1]}`).join('<br>')}
+        `);
+    </script>
+</body>
+</html>
